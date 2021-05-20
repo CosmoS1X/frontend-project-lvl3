@@ -20,8 +20,11 @@
   "homepage": "https://github.com/CosmoS1X/frontend-project-lvl3#readme",
   "dependencies": {
     "@popperjs/core": "^2.9.2",
+    "axios": "^0.21.1",
     "bootstrap": "^5.0.0",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "on-change": "^3.0.2",
+    "yup": "^0.32.9"
   },
   "devDependencies": {
     "css-loader": "^5.2.4",
