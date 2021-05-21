@@ -7,6 +7,7 @@ import { renderState, renderError } from './renderers.js';
 import parse from './parser.js';
 import getDocument from './getDocumentFromUrl.js';
 import resources from './locales';
+import { isRss } from './handlers.js';
 
 const clearProcessState = (state) => {
   state.form.processState = 'clear';
@@ -16,7 +17,7 @@ export default () => {
   const i18n = i18next.createInstance();
   i18n.init({
     lng: 'ru',
-    debug: true,
+    debug: false,
     resources,
   });
 
@@ -43,10 +44,12 @@ export default () => {
       switch (value) {
         case 'loading':
           getDocument(state.form.url)
+            .then((doc) => isRss(doc, i18n))
             .then((doc) => addRss(doc))
             .then(() => form.reset())
             .catch((err) => {
-              throw err;
+              watchedState.form.error = err.message;
+              watchedState.form.processState = 'failed';
             });
           break;
         case 'downloaded':
@@ -65,16 +68,12 @@ export default () => {
   });
 
   const addRss = (doc) => {
+    watchedState.downloadedFeeds.push(watchedState.form.url);
+
     const feedback = document.querySelector('.feedback');
     feedback.textContent = '';
 
     const rss = doc.querySelector('rss');
-
-    if (!rss) {
-      watchedState.form.error = `${i18n.t('errors.notContain')}`;
-      watchedState.form.processState = 'failed';
-      return;
-    }
 
     parse(rss, watchedState);
 
@@ -94,7 +93,6 @@ export default () => {
       watchedState.form.error = `${i18n.t('errors.alreadyExists')}`;
       watchedState.form.processState = 'failed';
     } else if (watchedState.form.error.length === 0) {
-      watchedState.downloadedFeeds.push(url);
       watchedState.form.url = url;
       watchedState.form.processState = 'loading';
     } else {

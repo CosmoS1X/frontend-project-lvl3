@@ -4,7 +4,7 @@ export default (url) => fetch(`https://hexlet-allorigins.herokuapp.com/get?url=$
       return response.json();
     }
 
-    throw new Error('Network response was not ok.');
+    throw new Error('Network error');
   })
   .then((data) => {
     const parser = new DOMParser();
