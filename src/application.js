@@ -1,16 +1,25 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable no-param-reassign */
 import onChange from 'on-change';
+import i18next from 'i18next';
 import validateURL from './validator.js';
 import { renderState, renderError } from './renderers.js';
 import parse from './parser.js';
 import getDocument from './getDocumentFromUrl.js';
+import resources from './locales';
 
 const clearProcessState = (state) => {
   state.form.processState = 'clear';
 };
 
 export default () => {
+  const i18n = i18next.createInstance();
+  i18n.init({
+    lng: 'ru',
+    debug: true,
+    resources,
+  });
+
   const state = {
     form: {
       processState: '',
@@ -41,7 +50,7 @@ export default () => {
             });
           break;
         case 'downloaded':
-          renderState(state);
+          renderState(state, i18n);
           break;
         case 'failed':
           renderError(state.form.error);
@@ -62,14 +71,15 @@ export default () => {
     const rss = doc.querySelector('rss');
 
     if (!rss) {
-      watchedState.form.error = 'Ресурс не содержит валидный RSS';
+      watchedState.form.error = `${i18n.t('errors.notContain')}`;
       watchedState.form.processState = 'failed';
+      return;
     }
 
     parse(rss, watchedState);
 
     feedback.classList.add('text-success');
-    feedback.textContent = 'RSS успешно загружен';
+    feedback.textContent = `${i18n.t('success')}`;
     watchedState.form.processState = 'downloaded';
   };
 
@@ -81,7 +91,7 @@ export default () => {
     watchedState.form.error = error;
 
     if (watchedState.downloadedFeeds.includes(url)) {
-      watchedState.form.error = 'RSS уже существует';
+      watchedState.form.error = `${i18n.t('errors.alreadyExists')}`;
       watchedState.form.processState = 'failed';
     } else if (watchedState.form.error.length === 0) {
       watchedState.downloadedFeeds.push(url);

@@ -16,7 +16,7 @@ const createFeedElement = (feed) => {
   return element;
 };
 
-const createPostElement = (post) => {
+const createPostElement = (post, i18n) => {
   const element = document.createElement('li');
   element.classList.add(
     'list-group-item',
@@ -34,7 +34,7 @@ const createPostElement = (post) => {
   const button = document.createElement('button');
   button.setAttribute('type', 'button');
   button.classList.add('btn', 'btn-primary', 'btn-sm');
-  button.textContent = 'Просмотр';
+  button.textContent = `${i18n.t('posts.viewButton')}`;
 
   button.addEventListener('click', () => alert('feature in development'));
 
@@ -44,7 +44,7 @@ const createPostElement = (post) => {
   return element;
 };
 
-export const renderState = (state) => {
+export const renderState = (state, i18n) => {
   const { feeds, posts } = state.form.data;
 
   input.classList.remove('is-invalid');
@@ -53,7 +53,7 @@ export const renderState = (state) => {
   feedsContainer.textContent = '';
 
   const feedsHeader = document.createElement('h2');
-  feedsHeader.textContent = 'Фиды';
+  feedsHeader.textContent = `${i18n.t('feeds.title')}`;
 
   const feedsList = document.createElement('ul');
   feedsList.classList.add('list-group', 'mb-5');
@@ -67,11 +67,11 @@ export const renderState = (state) => {
   postsContainer.textContent = '';
 
   const postsHeader = document.createElement('h2');
-  postsHeader.textContent = 'Посты';
+  postsHeader.textContent = `${i18n.t('posts.title')}`;
 
   const postsList = document.createElement('ul');
   postsList.classList.add('list-group');
-  posts.flat().forEach((post) => postsList.append(createPostElement(post)));
+  posts.flat().forEach((post) => postsList.append(createPostElement(post, i18n)));
 
   postsContainer.append(postsHeader);
   postsContainer.append(postsList);
