@@ -1,10 +1,10 @@
 import onChange from 'on-change';
 import i18next from 'i18next';
 import validateURL from './validator.js';
-import parse from './parser.js';
 import getDocument from './getDocumentFromUrl.js';
 import resources from './locales';
-import { isRss } from './handlers.js';
+import { isRss, addRss } from './handlers.js';
+import { parseFeeds, parsePosts } from './parsers.js';
 import watchers from './watchers.js';
 
 export default () => {
@@ -28,23 +28,9 @@ export default () => {
     downloadedFeeds: [],
   };
 
-  const form = document.querySelector('form');
-
   const watchedState = onChange(state, watchers(state, i18n));
 
-  const addRss = (doc) => {
-    const feedback = document.querySelector('.feedback');
-    feedback.textContent = '';
-
-    const rss = doc.querySelector('rss');
-
-    parse(rss, watchedState);
-
-    feedback.classList.add('text-success');
-    feedback.textContent = `${i18n.t('success')}`;
-    watchedState.form.processState = 'downloaded';
-  };
-
+  const form = document.querySelector('form');
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -53,12 +39,13 @@ export default () => {
     watchedState.form.error = error;
 
     if (watchedState.form.error.length === 0) {
-      watchedState.downloadedFeeds.push(url);
       watchedState.form.url = url;
 
       getDocument(url)
-        .then((doc) => isRss(doc, i18n))
-        .then((doc) => addRss(doc))
+        .then((data) => isRss(data, i18n))
+        .then((rss) => addRss(rss, watchedState, i18n))
+        .then((rss) => parseFeeds(rss, watchedState))
+        .then((rss) => parsePosts(rss, watchedState))
         .then(() => form.reset())
         .catch((err) => {
           watchedState.form.error = err.message;

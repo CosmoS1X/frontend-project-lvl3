@@ -1,4 +1,4 @@
-import { renderState, renderError } from './renderers.js';
+import { renderFeeds, renderPosts, renderError } from './renderers.js';
 import { clearProcessState } from './handlers.js';
 
 export default (state, i18n) => (path, value) => {
@@ -7,8 +7,12 @@ export default (state, i18n) => (path, value) => {
   // console.log('VALUE:', value);
   if (path === 'form.processState') {
     switch (value) {
-      case 'downloaded':
-        renderState(state, i18n);
+      case 'feed downloaded':
+        renderFeeds(state, i18n);
+        clearProcessState(state);
+        break;
+      case 'posts downloaded':
+        renderPosts(state, i18n);
         clearProcessState(state);
         break;
       case 'failed':

@@ -1,16 +1,18 @@
-import _ from 'lodash';
-
-export default (rss, watchedState) => {
+export const parseFeeds = (rss, watchedState) => {
   const feedTitle = rss.querySelector('title');
   const feedDescription = rss.querySelector('description');
-  const postElements = rss.querySelectorAll('item');
-  const rssId = _.uniqueId();
 
   watchedState.form.data.feeds.push({
-    id: rssId,
     title: feedTitle.textContent,
     description: feedDescription.textContent,
   });
+
+  watchedState.form.processState = 'feed downloaded';
+  return rss;
+};
+
+export const parsePosts = (rss, watchedState) => {
+  const postElements = rss.querySelectorAll('item');
 
   const posts = Array.from(postElements).map((post) => {
     const title = post.querySelector('title');
@@ -20,7 +22,6 @@ export default (rss, watchedState) => {
     const guid = post.querySelector('guid');
 
     return {
-      feedId: rssId,
       title: title.textContent,
       description: description.textContent,
       link: link.textContent,
@@ -30,4 +31,5 @@ export default (rss, watchedState) => {
   });
 
   watchedState.form.data.posts.unshift(posts);
+  watchedState.form.processState = 'posts downloaded';
 };

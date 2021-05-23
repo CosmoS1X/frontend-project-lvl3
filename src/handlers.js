@@ -8,6 +8,16 @@ export const isRss = (doc, i18n) => {
   return doc;
 };
 
+export const addRss = (doc, watchedState, i18n) => {
+  watchedState.downloadedFeeds.push(watchedState.form.url);
+  const feedback = document.querySelector('.feedback');
+  feedback.textContent = '';
+  feedback.classList.add('text-success');
+  feedback.textContent = `${i18n.t('success')}`;
+  const rss = doc.querySelector('rss');
+  return rss;
+};
+
 export const clearProcessState = (state) => {
-  state.form.processState = 'clear';
+  state.form.processState = '';
 };

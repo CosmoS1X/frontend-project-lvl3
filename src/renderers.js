@@ -44,8 +44,8 @@ const createPostElement = (post, i18n) => {
   return element;
 };
 
-export const renderState = (state, i18n) => {
-  const { feeds, posts } = state.form.data;
+export const renderFeeds = (state, i18n) => {
+  const { feeds } = state.form.data;
 
   input.classList.remove('is-invalid');
 
@@ -62,6 +62,10 @@ export const renderState = (state, i18n) => {
 
   feedsContainer.append(feedsHeader);
   feedsContainer.append(feedsList);
+};
+
+export const renderPosts = (state, i18n) => {
+  const { posts } = state.form.data;
 
   const postsContainer = document.querySelector('.posts');
   postsContainer.textContent = '';
