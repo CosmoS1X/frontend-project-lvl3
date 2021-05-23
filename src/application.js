@@ -1,15 +1,11 @@
 import onChange from 'on-change';
 import i18next from 'i18next';
 import validateURL from './validator.js';
-import { renderState, renderError } from './renderers.js';
 import parse from './parser.js';
 import getDocument from './getDocumentFromUrl.js';
 import resources from './locales';
 import { isRss } from './handlers.js';
-
-const clearProcessState = (state) => {
-  state.form.processState = 'clear';
-};
+import watchers from './watchers.js';
 
 export default () => {
   const i18n = i18next.createInstance();
@@ -34,26 +30,7 @@ export default () => {
 
   const form = document.querySelector('form');
 
-  const watchedState = onChange(state, (path, value) => {
-    // console.log('STATE:', state);
-    // console.log('PATH:', path);
-    // console.log('VALUE:', value);
-    if (path === 'form.processState') {
-      switch (value) {
-        case 'downloaded':
-          renderState(state, i18n);
-          break;
-        case 'failed':
-          renderError(state.form.error);
-          break;
-        default:
-          throw new Error(`${value} is unknown state`);
-      }
-    }
-    if (path === 'form.error') {
-      clearProcessState(state);
-    }
-  });
+  const watchedState = onChange(state, watchers(state, i18n));
 
   const addRss = (doc) => {
     const feedback = document.querySelector('.feedback');

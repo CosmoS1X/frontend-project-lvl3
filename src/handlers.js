@@ -8,4 +8,6 @@ export const isRss = (doc, i18n) => {
   return doc;
 };
 
-export const func = () => {};
+export const clearProcessState = (state) => {
+  state.form.processState = 'clear';
+};
