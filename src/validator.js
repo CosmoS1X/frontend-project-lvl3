@@ -1,14 +1,11 @@
 import * as yup from 'yup';
 
-yup.setLocale({
-  string: {
-    url: 'Ссылка должна быть валидным URL',
-  },
-});
-
-const schema = yup.string().url();
-
-export default (url) => {
+export default (url, downloadedFeeds, i18n) => {
+  const schema = yup
+    .string()
+    .required(`${i18n.t('errors.required')}`)
+    .url(`${i18n.t('errors.invalid')}`)
+    .notOneOf(downloadedFeeds, `${i18n.t('errors.alreadyExists')}`);
   try {
     schema.validateSync(url);
     return '';
