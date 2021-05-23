@@ -17,6 +17,7 @@ export default (rss, watchedState) => {
     const description = post.querySelector('description');
     const link = post.querySelector('link');
     const date = post.querySelector('pubDate');
+    const guid = post.querySelector('guid');
 
     return {
       feedId: rssId,
@@ -24,6 +25,7 @@ export default (rss, watchedState) => {
       description: description.textContent,
       link: link.textContent,
       date: date.textContent,
+      guid: guid.textContent,
     };
   });
 

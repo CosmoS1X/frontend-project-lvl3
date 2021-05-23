@@ -1,5 +1,3 @@
-/* eslint-disable no-use-before-define */
-/* eslint-disable no-param-reassign */
 import onChange from 'on-change';
 import i18next from 'i18next';
 import validateURL from './validator.js';
@@ -42,16 +40,6 @@ export default () => {
     // console.log('VALUE:', value);
     if (path === 'form.processState') {
       switch (value) {
-        case 'loading':
-          getDocument(state.form.url)
-            .then((doc) => isRss(doc, i18n))
-            .then((doc) => addRss(doc))
-            .then(() => form.reset())
-            .catch((err) => {
-              watchedState.form.error = err.message;
-              watchedState.form.processState = 'failed';
-            });
-          break;
         case 'downloaded':
           renderState(state, i18n);
           break;
@@ -68,8 +56,6 @@ export default () => {
   });
 
   const addRss = (doc) => {
-    watchedState.downloadedFeeds.push(watchedState.form.url);
-
     const feedback = document.querySelector('.feedback');
     feedback.textContent = '';
 
@@ -86,15 +72,21 @@ export default () => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const url = formData.get('url');
-    const error = validateURL(url);
+    const error = validateURL(url, watchedState.downloadedFeeds, i18n);
     watchedState.form.error = error;
 
-    if (watchedState.downloadedFeeds.includes(url)) {
-      watchedState.form.error = `${i18n.t('errors.alreadyExists')}`;
-      watchedState.form.processState = 'failed';
-    } else if (watchedState.form.error.length === 0) {
+    if (watchedState.form.error.length === 0) {
+      watchedState.downloadedFeeds.push(url);
       watchedState.form.url = url;
-      watchedState.form.processState = 'loading';
+
+      getDocument(url)
+        .then((doc) => isRss(doc, i18n))
+        .then((doc) => addRss(doc))
+        .then(() => form.reset())
+        .catch((err) => {
+          watchedState.form.error = err.message;
+          watchedState.form.processState = 'failed';
+        });
     } else {
       watchedState.form.processState = 'failed';
     }
