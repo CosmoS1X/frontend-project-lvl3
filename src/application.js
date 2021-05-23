@@ -1,5 +1,6 @@
 import onChange from 'on-change';
 import i18next from 'i18next';
+import _ from 'lodash';
 import validateURL from './validator.js';
 import getDocument from './getDocumentFromUrl.js';
 import resources from './locales';
@@ -30,6 +31,28 @@ export default () => {
 
   const watchedState = onChange(state, watchers(state, i18n));
 
+  const updatePosts = () => {
+    watchedState.downloadedFeeds.forEach((feed) => {
+      getDocument(feed)
+        .then((doc) => {
+          // console.log(doc);
+          const postData = parsePosts(doc);
+          // console.log(postData);
+          // console.log(watchedState.form.data.posts.flat());
+          const newPosts = _.differenceBy(postData, watchedState.form.data.posts.flat(), 'guid');
+          // console.log(newPosts);
+          // if (newPosts.length === 0) {
+          //   console.log('there are no new posts');
+          //   return;
+          // }
+          watchedState.form.data.posts.unshift(newPosts);
+          watchedState.form.processState = 'posts downloaded';
+        });
+    });
+    // console.log('update after 5 seconds');
+    setTimeout(updatePosts, 5000);
+  };
+
   const form = document.querySelector('form');
   form.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -45,8 +68,12 @@ export default () => {
         .then((data) => isRss(data, i18n))
         .then((rss) => addRss(rss, watchedState, i18n))
         .then((rss) => parseFeeds(rss, watchedState))
-        .then((rss) => parsePosts(rss, watchedState))
+        .then((rss) => {
+          watchedState.form.data.posts.unshift(parsePosts(rss));
+          watchedState.form.processState = 'posts downloaded';
+        })
         .then(() => form.reset())
+        .then(() => updatePosts())
         .catch((err) => {
           watchedState.form.error = err.message;
           watchedState.form.processState = 'failed';

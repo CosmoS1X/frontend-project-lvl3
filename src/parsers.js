@@ -11,10 +11,10 @@ export const parseFeeds = (rss, watchedState) => {
   return rss;
 };
 
-export const parsePosts = (rss, watchedState) => {
+export const parsePosts = (rss) => {
   const postElements = rss.querySelectorAll('item');
 
-  const posts = Array.from(postElements).map((post) => {
+  return Array.from(postElements).map((post) => {
     const title = post.querySelector('title');
     const description = post.querySelector('description');
     const link = post.querySelector('link');
@@ -29,7 +29,4 @@ export const parsePosts = (rss, watchedState) => {
       guid: guid.textContent,
     };
   });
-
-  watchedState.form.data.posts.unshift(posts);
-  watchedState.form.processState = 'posts downloaded';
 };
