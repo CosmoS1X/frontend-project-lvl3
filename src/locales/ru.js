@@ -13,6 +13,7 @@ export default {
       invalid: 'Ссылка должна быть валидным URL',
       alreadyExists: 'RSS уже существует',
       notContain: 'Ресурс не содержит валидный RSS',
+      network: 'Ошибка сети',
     },
   },
 };

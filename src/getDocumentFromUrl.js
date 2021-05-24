@@ -1,10 +1,10 @@
-export default (url) => fetch(`https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(url)}`)
+export default (url, i18n) => fetch(`https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(url)}`)
   .then((response) => {
     if (response.ok) {
       return response.json();
     }
 
-    throw new Error('Network error');
+    throw new Error(`${i18n.t('errors.network')}`);
   })
   .then((data) => {
     const parser = new DOMParser();

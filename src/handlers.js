@@ -1,4 +1,4 @@
-export const isRss = (doc, i18n) => {
+export const checkIsRss = (doc, i18n) => {
   const rss = doc.querySelector('rss');
 
   if (!rss) {
