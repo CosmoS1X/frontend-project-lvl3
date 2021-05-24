@@ -1,3 +1,5 @@
+import 'bootstrap';
+
 const input = document.querySelector('input');
 
 const createFeedElement = (feed) => {
@@ -27,16 +29,32 @@ const createPostElement = (post, i18n) => {
 
   const link = document.createElement('a');
   link.setAttribute('href', post.link);
-  link.classList.add('font-weight-bold');
+  link.classList.add(post.isReaded ? 'font-weight-normal' : 'font-weight-bold');
   link.setAttribute('rel', 'noopener noreferrer');
   link.textContent = post.title;
 
   const button = document.createElement('button');
   button.setAttribute('type', 'button');
   button.classList.add('btn', 'btn-primary', 'btn-sm');
+  button.setAttribute('data-bs-toggle', 'modal');
+  button.setAttribute('data-bs-target', '#modal');
   button.textContent = `${i18n.t('posts.viewButton')}`;
 
-  button.addEventListener('click', () => alert('feature in development'));
+  button.addEventListener('click', () => {
+    link.classList.remove('font-weight-bold');
+    link.classList.add('font-weight-normal');
+
+    const title = document.querySelector('.modal-title');
+    title.textContent = post.title;
+
+    const description = document.querySelector('.modal-body');
+    description.textContent = post.description;
+
+    const articleButton = document.querySelector('.full-article');
+    articleButton.setAttribute('href', post.link);
+
+    post.isReaded = true;
+  });
 
   element.append(link);
   element.append(button);

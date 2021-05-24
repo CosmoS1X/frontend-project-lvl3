@@ -27,6 +27,7 @@ export const parsePosts = (rss) => {
       link: link.textContent,
       date: date.textContent,
       guid: guid.textContent,
+      isReaded: false,
     };
   });
 };
