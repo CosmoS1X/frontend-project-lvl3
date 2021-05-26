@@ -1,5 +1,5 @@
 import onChange from 'on-change';
-import i18next from 'i18next';
+import i18n from 'i18next';
 import _ from 'lodash';
 import validateURL from './validator.js';
 import getDocument from './getDocumentFromUrl.js';
@@ -8,9 +8,8 @@ import { checkIsRss, addRss } from './handlers.js';
 import { parseFeeds, parsePosts } from './parsers.js';
 import watchers from './watchers.js';
 
-export default () => {
-  const i18n = i18next.createInstance();
-  return i18n
+export default () =>
+  i18n
     .init({
       lng: 'ru',
       debug: false,
@@ -76,4 +75,3 @@ export default () => {
       });
     })
     .catch(console.error);
-};
