@@ -1,7 +1,5 @@
 import 'bootstrap';
 
-const input = document.querySelector('input');
-
 const createFeedElement = (feed) => {
   const element = document.createElement('li');
   element.classList.add('list-group-item');
@@ -65,6 +63,7 @@ const createPostElement = (post, i18n) => {
 export const renderFeeds = (state, i18n) => {
   const { feeds } = state.form.data;
 
+  const input = document.querySelector('input');
   input.classList.remove('is-invalid');
 
   const feedsContainer = document.querySelector('.feeds');
@@ -100,6 +99,7 @@ export const renderPosts = (state, i18n) => {
 };
 
 export const renderError = (error) => {
+  const input = document.querySelector('input');
   input.classList.add('is-invalid');
   const feedback = document.querySelector('.feedback');
   feedback.classList.remove('text-success');
