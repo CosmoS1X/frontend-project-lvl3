@@ -1,15 +1,28 @@
 import axios from 'axios';
 
-export default (url, i18n) => axios.get(`https://hexlet-allorigins.herokuapp.com/get?disableCache=true&url=${url}`)
-  .then((response) => {
-    if (response.statusText === 'OK') {
-      return response.data;
-    }
+const addProxy = (url) => {
+  const proxyLink = 'https://hexlet-allorigins.herokuapp.com/';
+  const newUrl = new URL('get', proxyLink);
+  newUrl.searchParams.set('disableCache', 'true');
+  newUrl.searchParams.set('url', url);
+  return newUrl.toString();
+};
 
-    throw new Error(`${i18n.t('errors.network')}`);
-  })
-  .then((data) => {
-    const parser = new DOMParser();
+export default (url, i18n) => {
+  const proximifiedUrl = addProxy(url);
 
-    return parser.parseFromString(data.contents, 'application/xml');
-  });
+  return axios
+    .get(proximifiedUrl)
+    .then((response) => {
+      if (response.statusText === 'OK') {
+        return response.data;
+      }
+
+      throw new Error(`${i18n.t('errors.network')}`);
+    })
+    .then((data) => {
+      const parser = new DOMParser();
+
+      return parser.parseFromString(data.contents, 'application/xml');
+    });
+};
