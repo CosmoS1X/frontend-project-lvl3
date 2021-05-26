@@ -8,9 +8,9 @@ import { checkIsRss, addRss } from './handlers.js';
 import { parseFeeds, parsePosts } from './parsers.js';
 import watchers from './watchers.js';
 
-export default () => {
+export default async () => {
   const i18n = i18next.createInstance();
-  i18n.init({
+  await i18n.init({
     lng: 'ru',
     debug: false,
     resources,
