@@ -33,31 +33,14 @@ export default () => {
 
   const updatePosts = () => {
     watchedState.downloadedFeeds.forEach((feed) => {
-      getDocument(feed).then((doc) => {
-        // console.log(doc);
+      const promises = getDocument(feed).then((doc) => {
         const postData = parsePosts(doc);
-        // console.log(postData);
-        // console.log(watchedState.form.data.posts.flat());
         const newPosts = _.differenceBy(postData, watchedState.form.data.posts.flat(), 'guid');
-        // console.log(newPosts);
-
-        // if (newPosts.length === 0) {
-        //   console.log('there are no new posts');
-        //   return;
-        // }
-
-        // const temp = [
-        //   {
-        //     title: new Date(),
-        //     description: 'description',
-        //   },
-        // ];
         watchedState.form.data.posts.unshift(newPosts);
         watchedState.form.processState = 'posts downloaded';
       });
+      Promise.all([promises]).then(setTimeout(updatePosts, 5000));
     });
-    // console.log('update after 5 seconds');
-    setTimeout(updatePosts, 5000);
   };
 
   const form = document.querySelector('form');

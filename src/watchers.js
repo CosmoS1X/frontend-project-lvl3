@@ -2,9 +2,6 @@ import { renderFeeds, renderPosts, renderError } from './renderers.js';
 import { clearProcessState } from './handlers.js';
 
 export default (state, i18n) => (path, value) => {
-  // console.log('STATE:', state);
-  // console.log('PATH:', path);
-  // console.log('VALUE:', value);
   if (path === 'form.processState') {
     switch (value) {
       case 'feed downloaded':
