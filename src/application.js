@@ -8,9 +8,9 @@ import { checkIsRss, addRss } from './handlers.js';
 import { parseFeeds, parsePosts } from './parsers.js';
 import watchers from './watchers.js';
 
-export default () => {
+export default async () => {
   const i18n = i18next.createInstance();
-  const init = i18n.init({
+  const init = await i18n.init({
     lng: 'ru',
     debug: false,
     resources,
@@ -32,14 +32,15 @@ export default () => {
   const watchedState = onChange(state, watchers(state, i18n));
 
   const updatePosts = () => {
+    const updateTimeout = 5000;
     watchedState.downloadedFeeds.forEach((feed) => {
-      const promises = getDocument(feed).then((doc) => {
+      const updates = getDocument(feed).then((doc) => {
         const postData = parsePosts(doc);
         const newPosts = _.differenceBy(postData, watchedState.form.data.posts.flat(), 'guid');
         watchedState.form.data.posts.unshift(newPosts);
         watchedState.form.processState = 'posts downloaded';
       });
-      Promise.all([promises]).then(setTimeout(updatePosts, 5000));
+      Promise.all([updates]).then(() => setTimeout(updatePosts, updateTimeout));
     });
   };
 
