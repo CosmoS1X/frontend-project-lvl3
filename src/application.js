@@ -52,7 +52,7 @@ export default async () => {
     const error = validateURL(url, watchedState.downloadedFeeds, i18n);
     watchedState.form.error = error;
 
-    if (watchedState.form.error !== '') {
+    if (error) {
       watchedState.form.processState = 'failed';
       return;
     }

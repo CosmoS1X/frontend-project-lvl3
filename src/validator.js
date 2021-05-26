@@ -8,7 +8,7 @@ export default (url, downloadedFeeds, i18n) => {
     .notOneOf(downloadedFeeds, `${i18n.t('errors.alreadyExists')}`);
   try {
     schema.validateSync(url);
-    return '';
+    return null;
   } catch (err) {
     return err.message;
   }
