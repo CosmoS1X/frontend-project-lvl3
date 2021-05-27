@@ -10,9 +10,13 @@ const addProxy = (url) => {
 
 export default (url, i18n) => {
   const proxifiedUrl = addProxy(url);
+  const decoded = decodeURIComponent(proxifiedUrl);
+
+  console.log('origin url', url);
+  console.log('proxified Url', decoded);
 
   return axios
-    .get(decodeURIComponent(proxifiedUrl))
+    .get(decoded)
     .then((response) => {
       if (response.statusText === 'OK') {
         return response.data;
