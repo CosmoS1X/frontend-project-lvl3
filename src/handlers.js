@@ -26,7 +26,6 @@ export const clearProcessState = (state) => {
 export const disableUI = () => {
   const inputField = document.querySelector('input');
   const submitButton = document.querySelector('[type="submit"]');
-
   inputField.readOnly = true;
   submitButton.disabled = true;
 };
@@ -34,7 +33,6 @@ export const disableUI = () => {
 export const enableUI = () => {
   const inputField = document.querySelector('input');
   const submitButton = document.querySelector('[type="submit"]');
-
-  inputField.removeAttribute('readonly');
-  submitButton.removeAttribute('disabled');
+  inputField.readOnly = false;
+  submitButton.disabled = false;
 };
