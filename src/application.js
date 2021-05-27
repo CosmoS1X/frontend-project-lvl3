@@ -59,14 +59,16 @@ export default () => i18n
       watchedState.form.url = url;
 
       getDocument(url, i18n)
-        .then((data) => checkIsRss(data, i18n))
+        .then((data) => {
+          form.reset();
+          return checkIsRss(data, i18n);
+        })
         .then((rss) => addRss(rss, watchedState, i18n))
         .then((rss) => parseFeeds(rss, watchedState))
         .then((rss) => {
           watchedState.form.data.posts.unshift(parsePosts(rss));
           watchedState.form.processState = 'posts downloaded';
         })
-        .then(() => form.reset())
         .then(() => updatePosts())
         .catch((err) => {
           watchedState.form.error = err.message;
