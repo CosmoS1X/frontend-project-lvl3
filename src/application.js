@@ -10,7 +10,7 @@ import watchers from './watchers.js';
 
 export default async () => {
   const i18n = i18next.createInstance();
-  const init = await i18n.init({
+  await i18n.init({
     lng: 'ru',
     debug: false,
     resources,
@@ -74,6 +74,4 @@ export default async () => {
         watchedState.form.processState = 'failed';
       });
   });
-
-  return init;
 };
