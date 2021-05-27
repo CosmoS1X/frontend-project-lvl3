@@ -1,5 +1,5 @@
 import { renderFeeds, renderPosts, renderError } from './renderers.js';
-import { clearProcessState, disableUI, enableUI } from './handlers.js';
+import { clearProcessState, enableUI } from './handlers.js';
 
 export default (state, i18n) => (path, value) => {
   // console.log('STATE', state);
@@ -8,8 +8,8 @@ export default (state, i18n) => (path, value) => {
   if (path === 'form.processState') {
     switch (value) {
       case 'loading':
-        disableUI();
-        clearProcessState(state);
+        // disableUI();
+        // clearProcessState(state);
         break;
       case 'feed downloaded':
         enableUI();
