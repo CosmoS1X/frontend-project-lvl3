@@ -71,7 +71,9 @@ export default () => i18n
         })
         .then(() => updatePosts())
         .catch((err) => {
-          watchedState.form.error = err.message;
+          watchedState.form.error = err.message === 'Network Error'
+            ? `${i18n.t('errors.network')}`
+            : err.message;
           watchedState.form.processState = 'failed';
         });
     });
