@@ -4,7 +4,12 @@ import _ from 'lodash';
 import validateURL from './validator.js';
 import getDocument from './getDocumentFromUrl.js';
 import resources from './locales';
-import { checkIsRss, addRss, disableUI } from './handlers.js';
+import {
+  checkIsRss,
+  addRss,
+  disableUI,
+  enableUI,
+} from './handlers.js';
 import { parseFeeds, parsePosts } from './parsers.js';
 import watchers from './watchers.js';
 
@@ -63,6 +68,7 @@ export default () => i18n
       getDocument(url, i18n)
         .then((data) => {
           form.reset();
+          enableUI();
           return checkIsRss(data, i18n);
         })
         .then((rss) => addRss(rss, watchedState, i18n))
