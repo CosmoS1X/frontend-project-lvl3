@@ -35,6 +35,6 @@ export const enableUI = () => {
   const inputField = document.querySelector('input');
   const submitButton = document.querySelector('[type="submit"]');
 
-  inputField.readOnly = false;
-  submitButton.disabled = false;
+  inputField.removeAttribute('readonly');
+  submitButton.removeAttribute('disabled');
 };
