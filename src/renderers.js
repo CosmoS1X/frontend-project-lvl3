@@ -61,7 +61,7 @@ const createPostElement = (post, i18n) => {
 };
 
 export const renderFeeds = (state, i18n) => {
-  const { feeds } = state.form.data;
+  const { feeds } = state.data;
 
   const input = document.querySelector('input');
   input.classList.remove('is-invalid');
@@ -79,10 +79,12 @@ export const renderFeeds = (state, i18n) => {
 
   feedsContainer.append(feedsHeader);
   feedsContainer.append(feedsList);
+
+  state.processState = 'standby';
 };
 
 export const renderPosts = (state, i18n) => {
-  const { posts } = state.form.data;
+  const { posts } = state.data;
 
   const postsContainer = document.querySelector('.posts');
   postsContainer.textContent = '';
@@ -96,13 +98,16 @@ export const renderPosts = (state, i18n) => {
 
   postsContainer.append(postsHeader);
   postsContainer.append(postsList);
+
+  state.processState = 'standby';
 };
 
-export const renderError = (error) => {
+export const renderError = (state) => {
   const input = document.querySelector('input');
   input.classList.add('is-invalid');
   const feedback = document.querySelector('.feedback');
   feedback.classList.remove('text-success');
   feedback.classList.add('text-danger');
-  feedback.textContent = error;
+  feedback.textContent = state.form.error;
+  state.processState = 'standby';
 };

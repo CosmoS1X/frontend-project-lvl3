@@ -2,12 +2,12 @@ export const parseFeeds = (rss, watchedState) => {
   const feedTitle = rss.querySelector('title');
   const feedDescription = rss.querySelector('description');
 
-  watchedState.form.data.feeds.push({
+  watchedState.data.feeds.push({
     title: feedTitle.textContent,
     description: feedDescription.textContent,
   });
 
-  watchedState.form.processState = 'feed downloaded';
+  watchedState.processState = 'feed downloaded';
   return rss;
 };
 

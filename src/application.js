@@ -21,14 +21,14 @@ export default () => i18n
   })
   .then(() => {
     const state = {
+      processState: 'standby',
       form: {
-        processState: '',
         url: '',
-        data: {
-          feeds: [],
-          posts: [],
-        },
-        error: '',
+        error: null,
+      },
+      data: {
+        feeds: [],
+        posts: [],
       },
       downloadedFeeds: [],
     };
@@ -40,9 +40,9 @@ export default () => i18n
       watchedState.downloadedFeeds.forEach((feed) => {
         const updates = getDocument(feed).then((doc) => {
           const postData = parsePosts(doc);
-          const newPosts = _.differenceBy(postData, watchedState.form.data.posts.flat(), 'guid');
-          watchedState.form.data.posts.unshift(newPosts);
-          watchedState.form.processState = 'posts downloaded';
+          const newPosts = _.differenceBy(postData, watchedState.data.posts.flat(), 'guid');
+          watchedState.data.posts.unshift(newPosts);
+          watchedState.processState = 'posts downloaded';
         });
         Promise.all([updates]).then(() => setTimeout(updatePosts, updateTimeout));
       });
@@ -57,7 +57,7 @@ export default () => i18n
       watchedState.form.error = error;
 
       if (error) {
-        watchedState.form.processState = 'failed';
+        watchedState.processState = 'failed';
         return;
       }
 
@@ -74,15 +74,15 @@ export default () => i18n
         .then((rss) => addRss(rss, watchedState, i18n))
         .then((rss) => parseFeeds(rss, watchedState))
         .then((rss) => {
-          watchedState.form.data.posts.unshift(parsePosts(rss));
-          watchedState.form.processState = 'posts downloaded';
+          watchedState.data.posts.unshift(parsePosts(rss));
+          watchedState.processState = 'posts downloaded';
         })
         .then(() => updatePosts())
         .catch((err) => {
           watchedState.form.error = err.message === 'Network Error'
             ? `${i18n.t('errors.network')}`
             : err.message;
-          watchedState.form.processState = 'failed';
+          watchedState.processState = 'failed';
         });
     });
   })

@@ -9,7 +9,6 @@ export const checkIsRss = (doc, i18n) => {
 };
 
 export const addRss = (doc, watchedState, i18n) => {
-  watchedState.form.processState = 'loading';
   watchedState.downloadedFeeds.push(watchedState.form.url);
   const feedback = document.querySelector('.feedback');
   feedback.textContent = '';
@@ -17,10 +16,6 @@ export const addRss = (doc, watchedState, i18n) => {
   feedback.textContent = `${i18n.t('success')}`;
   const rss = doc.querySelector('rss');
   return rss;
-};
-
-export const clearProcessState = (state) => {
-  state.form.processState = '';
 };
 
 export const disableUI = () => {
