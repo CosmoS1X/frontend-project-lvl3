@@ -11,7 +11,7 @@ export const checkIsRss = (doc, i18n) => {
 export const addRss = (doc, watchedState, i18n) => {
   watchedState.downloadedFeeds.push(watchedState.form.url);
   const feedback = document.querySelector('.feedback');
-  feedback.classList.add('text-danger');
+  feedback.classList.remove('text-danger');
   feedback.classList.add('text-success');
   feedback.textContent = `${i18n.t('success')}`;
   const rss = doc.querySelector('rss');
