@@ -14,6 +14,19 @@ import {
 import { parseFeeds, parsePosts } from './parsers.js';
 import watchers from './watchers.js';
 
+const updatePosts = (state) => {
+  const updateTimeout = 5000;
+  state.downloadedFeeds.forEach((feed) => {
+    const updates = getDocument(feed).then((doc) => {
+      const postData = parsePosts(doc);
+      const newPosts = _.differenceBy(postData, state.data.posts.flat(), 'guid');
+      state.data.posts.unshift(newPosts);
+      state.processState = 'posts downloaded';
+    });
+    Promise.all([updates]).then(() => setTimeout(updatePosts(state), updateTimeout));
+  });
+};
+
 export default () => {
   const i18n = i18next.createInstance();
   i18n.init({
@@ -36,19 +49,6 @@ export default () => {
   };
 
   const watchedState = onChange(state, watchers(state, i18n));
-
-  const updatePosts = () => {
-    const updateTimeout = 5000;
-    watchedState.downloadedFeeds.forEach((feed) => {
-      const updates = getDocument(feed).then((doc) => {
-        const postData = parsePosts(doc);
-        const newPosts = _.differenceBy(postData, watchedState.data.posts.flat(), 'guid');
-        watchedState.data.posts.unshift(newPosts);
-        watchedState.processState = 'posts downloaded';
-      });
-      Promise.all([updates]).then(() => setTimeout(updatePosts, updateTimeout));
-    });
-  };
 
   const form = document.querySelector('form');
   form.addEventListener('submit', (e) => {
@@ -79,7 +79,7 @@ export default () => {
         watchedState.data.posts.unshift(parsePosts(rss));
         watchedState.processState = 'posts downloaded';
       })
-      .then(() => updatePosts())
+      .then(() => updatePosts(watchedState))
       .catch((err) => {
         watchedState.form.error = err.message === 'Network Error'
           ? `${i18n.t('errors.network')}`
