@@ -1,5 +1,3 @@
-import 'bootstrap';
-
 const createFeedElement = (feed) => {
   const element = document.createElement('li');
   element.classList.add('list-group-item');
@@ -29,13 +27,14 @@ const createPostElement = (post, i18n) => {
   link.setAttribute('href', post.link);
   link.classList.add(post.isReaded ? 'font-weight-normal' : 'font-weight-bold');
   link.setAttribute('rel', 'noopener noreferrer');
+  link.setAttribute('target', '_blank');
   link.textContent = post.title;
 
   const button = document.createElement('button');
   button.setAttribute('type', 'button');
   button.classList.add('btn', 'btn-primary', 'btn-sm');
-  button.setAttribute('data-bs-toggle', 'modal');
-  button.setAttribute('data-bs-target', '#modal');
+  button.setAttribute('data-toggle', 'modal');
+  button.setAttribute('data-target', '#modal');
   button.textContent = `${i18n.t('posts.viewButton')}`;
 
   button.addEventListener('click', () => {

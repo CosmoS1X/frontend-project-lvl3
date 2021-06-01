@@ -1,3 +1,4 @@
+import 'bootstrap';
 import onChange from 'on-change';
 import i18n from 'i18next';
 import _ from 'lodash';
