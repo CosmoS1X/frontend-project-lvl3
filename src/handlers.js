@@ -1,19 +1,19 @@
-export const checkIsRss = (doc, i18n) => {
+export const checkIsRss = (doc, t) => {
   const rss = doc.querySelector('rss');
 
   if (!rss) {
-    return Promise.reject(new Error(`${i18n.t('errors.notContain')}`));
+    return Promise.reject(new Error(`${t('errors.notContain')}`));
   }
 
   return doc;
 };
 
-export const addRss = (doc, watchedState, i18n) => {
+export const addRss = (doc, watchedState, t) => {
   watchedState.downloadedFeeds.push(watchedState.form.url);
   const feedback = document.querySelector('.feedback');
   feedback.classList.remove('text-danger');
   feedback.classList.add('text-success');
-  feedback.textContent = `${i18n.t('success')}`;
+  feedback.textContent = `${t('success')}`;
   const rss = doc.querySelector('rss');
   return rss;
 };

@@ -1,13 +1,13 @@
 import { renderFeeds, renderPosts, renderError } from './renderers.js';
 
-export default (state, i18n) => (path, value) => {
+export default (state, t) => (path, value) => {
   if (path === 'processState') {
     switch (value) {
       case 'feed downloaded':
-        renderFeeds(state, i18n);
+        renderFeeds(state, t);
         break;
       case 'posts downloaded':
-        renderPosts(state, i18n);
+        renderPosts(state, t);
         break;
       case 'failed':
         renderError(state);

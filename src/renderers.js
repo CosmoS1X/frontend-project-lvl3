@@ -14,7 +14,7 @@ const createFeedElement = (feed) => {
   return element;
 };
 
-const createPostElement = (post, i18n) => {
+const createPostElement = (post, t) => {
   const element = document.createElement('li');
   element.classList.add(
     'list-group-item',
@@ -35,7 +35,7 @@ const createPostElement = (post, i18n) => {
   button.classList.add('btn', 'btn-primary', 'btn-sm');
   button.setAttribute('data-toggle', 'modal');
   button.setAttribute('data-target', '#modal');
-  button.textContent = `${i18n.t('posts.viewButton')}`;
+  button.textContent = `${t('posts.viewButton')}`;
 
   button.addEventListener('click', () => {
     link.classList.remove('font-weight-bold');
@@ -59,7 +59,7 @@ const createPostElement = (post, i18n) => {
   return element;
 };
 
-export const renderFeeds = (state, i18n) => {
+export const renderFeeds = (state, t) => {
   const { feeds } = state.data;
 
   const input = document.querySelector('input');
@@ -69,7 +69,7 @@ export const renderFeeds = (state, i18n) => {
   feedsContainer.textContent = '';
 
   const feedsHeader = document.createElement('h2');
-  feedsHeader.textContent = `${i18n.t('feeds.title')}`;
+  feedsHeader.textContent = `${t('feeds.title')}`;
 
   const feedsList = document.createElement('ul');
   feedsList.classList.add('list-group', 'mb-5');
@@ -82,18 +82,18 @@ export const renderFeeds = (state, i18n) => {
   state.processState = 'standby';
 };
 
-export const renderPosts = (state, i18n) => {
+export const renderPosts = (state, t) => {
   const { posts } = state.data;
 
   const postsContainer = document.querySelector('.posts');
   postsContainer.textContent = '';
 
   const postsHeader = document.createElement('h2');
-  postsHeader.textContent = `${i18n.t('posts.title')}`;
+  postsHeader.textContent = `${t('posts.title')}`;
 
   const postsList = document.createElement('ul');
   postsList.classList.add('list-group');
-  posts.flat().forEach((post) => postsList.append(createPostElement(post, i18n)));
+  posts.flat().forEach((post) => postsList.append(createPostElement(post, t)));
 
   postsContainer.append(postsHeader);
   postsContainer.append(postsList);
