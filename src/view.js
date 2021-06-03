@@ -27,7 +27,7 @@ const createPostElement = (post, t) => {
 
   const link = document.createElement('a');
   link.setAttribute('href', post.link);
-  link.classList.add(post.isReaded ? 'font-weight-normal' : 'font-weight-bold');
+  link.classList.add(post.isReaded ? 'font-weight-normal' : 'fw-bold');
   link.setAttribute('rel', 'noopener noreferrer');
   link.setAttribute('target', '_blank');
   link.textContent = post.title;
@@ -40,7 +40,7 @@ const createPostElement = (post, t) => {
   button.textContent = `${t('posts.viewButton')}`;
 
   button.addEventListener('click', () => {
-    link.classList.remove('font-weight-bold');
+    link.classList.remove('fw-bold');
     link.classList.add('font-weight-normal');
 
     const title = document.querySelector('.modal-title');
