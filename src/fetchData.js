@@ -8,7 +8,7 @@ const addProxy = (url) => {
   return newUrl.toString();
 };
 
-export default (url, t) => {
+export default (url) => {
   const proxifiedUrl = addProxy(url);
 
   return axios
@@ -18,11 +18,6 @@ export default (url, t) => {
         return response.data;
       }
 
-      throw new Error(`${t('errors.network')}`);
-    })
-    .then((data) => {
-      const parser = new DOMParser();
-
-      return parser.parseFromString(data.contents, 'application/xml');
+      throw new Error('Network Error');
     });
 };

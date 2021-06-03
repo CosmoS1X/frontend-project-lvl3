@@ -1,3 +1,5 @@
+import onChange from 'on-change';
+
 const createFeedElement = (feed) => {
   const element = document.createElement('li');
   element.classList.add('list-group-item');
@@ -62,9 +64,6 @@ const createPostElement = (post, t) => {
 export const renderFeeds = (state, t) => {
   const { feeds } = state.data;
 
-  const input = document.querySelector('input');
-  input.classList.remove('is-invalid');
-
   const feedsContainer = document.querySelector('.feeds');
   feedsContainer.textContent = '';
 
@@ -74,12 +73,10 @@ export const renderFeeds = (state, t) => {
   const feedsList = document.createElement('ul');
   feedsList.classList.add('list-group', 'mb-5');
 
-  feeds.forEach((feed) => feedsList.prepend(createFeedElement(feed)));
+  feeds.forEach((feed) => feedsList.append(createFeedElement(feed)));
 
   feedsContainer.append(feedsHeader);
   feedsContainer.append(feedsList);
-
-  state.processState = 'standby';
 };
 
 export const renderPosts = (state, t) => {
@@ -97,16 +94,75 @@ export const renderPosts = (state, t) => {
 
   postsContainer.append(postsHeader);
   postsContainer.append(postsList);
-
-  state.processState = 'standby';
 };
 
-export const renderError = (state) => {
-  const input = document.querySelector('input');
-  input.classList.add('is-invalid');
-  const feedback = document.querySelector('.feedback');
-  feedback.classList.remove('text-success');
-  feedback.classList.add('text-danger');
-  feedback.textContent = state.form.error;
-  state.processState = 'standby';
+export const renderFeedback = (state, elements, t) => {
+  const { input, feedback } = elements;
+  if (state.form.error) {
+    input.classList.add('is-invalid');
+    feedback.classList.remove('text-success');
+    feedback.classList.add('text-danger');
+    switch (state.form.error) {
+      case 'Not Contain RSS':
+        feedback.textContent = t('errors.notContain');
+        break;
+      case 'Network Error':
+        feedback.textContent = t('errors.network');
+        break;
+      default:
+        feedback.textContent = state.form.error;
+        break;
+    }
+  } else {
+    input.classList.remove('is-invalid');
+    feedback.classList.remove('text-danger');
+    feedback.classList.add('text-success');
+    feedback.textContent = `${t('success')}`;
+  }
 };
+
+const handleProcessState = (state, elements, t) => {
+  const { form, input, submitButton } = elements;
+  switch (state.processState) {
+    case 'loading':
+      input.readOnly = true;
+      submitButton.disabled = true;
+      break;
+    case 'downloaded':
+      input.readOnly = false;
+      submitButton.disabled = false;
+      form.reset();
+      input.focus();
+      renderFeedback(state, elements, t);
+      break;
+    case 'failed':
+      input.readOnly = false;
+      submitButton.disabled = false;
+      break;
+    default:
+      console.log('unknown state');
+  }
+};
+
+export default (state, elements, t) => onChange(state, (path) => {
+  // console.log('STATE:', state);
+  // console.log('PATH:', path);
+  // console.log('VALUE:', value);
+  switch (path) {
+    case 'data.feeds':
+      renderFeeds(state, t);
+      break;
+    case 'data.posts':
+      renderPosts(state, t);
+      break;
+    case 'processState':
+      handleProcessState(state, elements, t);
+      break;
+    case 'form.error':
+      renderFeedback(state, elements, t);
+      break;
+    default:
+      console.log('missed handler');
+      break;
+  }
+});

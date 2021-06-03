@@ -1,29 +1,41 @@
 import 'bootstrap';
-import onChange from 'on-change';
 import i18n from 'i18next';
 import _ from 'lodash';
 import validateURL from './validator.js';
-import getDocument from './getDocumentFromUrl.js';
+import fetchData from './fetchData.js';
 import resources from './locales';
-import {
-  checkIsRss,
-  addRss,
-  disableUI,
-  enableUI,
-} from './handlers.js';
-import { parseFeeds, parsePosts } from './parsers.js';
-import watchers from './watchers.js';
+import parseRss from './parseRss.js';
+import view from './view.js';
+
+const updateTimeout = 5000;
+
+const addRss = (state) => {
+  state.processState = 'loading';
+  fetchData(state.form.url)
+    .then((data) => {
+      const { title, description, posts } = parseRss(data);
+      state.channels.unshift(state.form.url);
+      const feed = { title, description };
+      state.data.feeds.unshift(feed);
+      state.data.posts.unshift(...posts);
+      state.processState = 'downloaded';
+    })
+    .catch((err) => {
+      console.log(err);
+      state.form.error = err.message;
+      state.processState = 'failed';
+    });
+};
 
 const updatePosts = (state) => {
-  console.log('!!!!!!!!!!!!!!!!!!!!!');
-  const updateTimeout = 5000;
-  state.downloadedFeeds.forEach((feed) => {
-    const updates = getDocument(feed).then((doc) => {
-      const postData = parsePosts(doc);
-      const newPosts = _.differenceBy(postData, state.data.posts.flat(), 'guid');
-      state.data.posts.unshift(newPosts);
-      state.processState = 'posts downloaded';
-    });
+  state.channels.forEach((feedUrl) => {
+    const updates = fetchData(feedUrl)
+      .then((data) => {
+        const { posts } = parseRss(data);
+        const newPosts = _.differenceBy(posts, state.data.posts, 'guid');
+        state.data.posts.unshift(...newPosts);
+      })
+      .catch((err) => console.log(err));
     Promise.all([updates]).finally(() => setTimeout(() => updatePosts(state), updateTimeout));
   });
 };
@@ -39,7 +51,14 @@ export default () => {
       feeds: [],
       posts: [],
     },
-    downloadedFeeds: [],
+    channels: [],
+  };
+
+  const elements = {
+    form: document.querySelector('form'),
+    input: document.querySelector('input'),
+    submitButton: document.querySelector('[type="submit"]'),
+    feedback: document.querySelector('.feedback'),
   };
 
   return i18n.createInstance().init({
@@ -48,14 +67,14 @@ export default () => {
     resources,
   })
     .then((t) => {
-      const watchedState = onChange(state, watchers(state, t));
+      const watchedState = view(state, elements, t);
 
       const form = document.querySelector('form');
       form.addEventListener('submit', (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
         const url = formData.get('url');
-        const error = validateURL(url, watchedState.downloadedFeeds, t);
+        const error = validateURL(url, watchedState.channels, t);
         watchedState.form.error = error;
 
         if (error) {
@@ -64,28 +83,8 @@ export default () => {
         }
 
         watchedState.form.url = url;
-
-        disableUI();
-
-        getDocument(url, t)
-          .then((data) => {
-            form.reset();
-            enableUI();
-            return checkIsRss(data, t);
-          })
-          .then((rss) => addRss(rss, watchedState, t))
-          .then((rss) => parseFeeds(rss, watchedState))
-          .then((rss) => {
-            watchedState.data.posts.unshift(parsePosts(rss));
-            watchedState.processState = 'posts downloaded';
-          })
-          .catch((err) => {
-            watchedState.form.error = err.message === 'Network Error'
-              ? `${t('errors.network')}`
-              : err.message;
-            watchedState.processState = 'failed';
-          });
+        addRss(watchedState);
       });
-      setTimeout(() => updatePosts(watchedState), 5000);
+      setTimeout(() => updatePosts(watchedState), updateTimeout);
     });
 };

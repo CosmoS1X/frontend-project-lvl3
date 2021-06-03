@@ -1,11 +1,11 @@
 import * as yup from 'yup';
 
-export default (url, downloadedFeeds, t) => {
+export default (url, channels, t) => {
   const schema = yup
     .string()
     .required(`${t('errors.required')}`)
     .url(`${t('errors.invalid')}`)
-    .notOneOf(downloadedFeeds, `${t('errors.alreadyExists')}`);
+    .notOneOf(channels, `${t('errors.alreadyExists')}`);
   try {
     schema.validateSync(url);
     return null;
