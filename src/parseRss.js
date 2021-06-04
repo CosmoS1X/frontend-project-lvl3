@@ -14,7 +14,7 @@ export default (data) => {
   return {
     title: feedTitle.textContent,
     description: feedDescription.textContent,
-    posts: Array.from(postElements).map((post) => {
+    items: Array.from(postElements).map((post) => {
       const title = post.querySelector('title');
       const description = post.querySelector('description');
       const link = post.querySelector('link');
@@ -25,7 +25,7 @@ export default (data) => {
         description: description.textContent,
         link: link.textContent,
         guid: guid.textContent,
-        isReaded: false,
+        readed: false,
       };
     }),
   };

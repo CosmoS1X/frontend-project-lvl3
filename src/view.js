@@ -18,16 +18,11 @@ const createFeedElement = (feed) => {
 
 const createPostElement = (post, t) => {
   const element = document.createElement('li');
-  element.classList.add(
-    'list-group-item',
-    'd-flex',
-    'justify-content-between',
-    'align-items-start',
-  );
+  element.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start');
 
   const link = document.createElement('a');
   link.setAttribute('href', post.link);
-  link.classList.add(post.isReaded ? 'font-weight-normal' : 'fw-bold');
+  link.classList.add(post.readed ? 'font-weight-normal' : 'fw-bold');
   link.setAttribute('rel', 'noopener noreferrer');
   link.setAttribute('target', '_blank');
   link.textContent = post.title;
@@ -52,7 +47,7 @@ const createPostElement = (post, t) => {
     const articleButton = document.querySelector('.full-article');
     articleButton.setAttribute('href', post.link);
 
-    post.isReaded = true;
+    post.readed = true;
   });
 
   element.append(link);
@@ -96,29 +91,30 @@ export const renderPosts = (state, t) => {
   postsContainer.append(postsList);
 };
 
-export const renderFeedback = (state, elements, t) => {
+const renderError = (state, elements, t) => {
   const { input, feedback } = elements;
-  if (state.form.error) {
-    input.classList.add('is-invalid');
-    feedback.classList.remove('text-success');
-    feedback.classList.add('text-danger');
-    switch (state.form.error) {
-      case 'Not Contain RSS':
-        feedback.textContent = t('errors.notContain');
-        break;
-      case 'Network Error':
-        feedback.textContent = t('errors.network');
-        break;
-      default:
-        feedback.textContent = state.form.error;
-        break;
-    }
-  } else {
-    input.classList.remove('is-invalid');
-    feedback.classList.remove('text-danger');
-    feedback.classList.add('text-success');
-    feedback.textContent = `${t('success')}`;
+  input.classList.add('is-invalid');
+  feedback.classList.remove('text-success');
+  feedback.classList.add('text-danger');
+  switch (state.form.error) {
+    case 'Not Contain RSS':
+      feedback.textContent = t('errors.notContain');
+      break;
+    case 'Network Error':
+      feedback.textContent = t('errors.network');
+      break;
+    default:
+      feedback.textContent = t(state.form.error);
+      break;
   }
+};
+
+export const renderSuccess = (elements, t) => {
+  const { input, feedback } = elements;
+  input.classList.remove('is-invalid');
+  feedback.classList.remove('text-danger');
+  feedback.classList.add('text-success');
+  feedback.textContent = `${t('success')}`;
 };
 
 const handleProcessState = (state, elements, t) => {
@@ -128,26 +124,25 @@ const handleProcessState = (state, elements, t) => {
       input.readOnly = true;
       submitButton.disabled = true;
       break;
-    case 'downloaded':
+    case 'standby':
       input.readOnly = false;
       submitButton.disabled = false;
       form.reset();
       input.focus();
-      renderFeedback(state, elements, t);
+      renderSuccess(elements, t);
       break;
     case 'failed':
       input.readOnly = false;
       submitButton.disabled = false;
       break;
     default:
-      console.log('unknown state');
+      break;
   }
 };
 
 export default (state, elements, t) => onChange(state, (path) => {
   // console.log('STATE:', state);
   // console.log('PATH:', path);
-  // console.log('VALUE:', value);
   switch (path) {
     case 'data.feeds':
       renderFeeds(state, t);
@@ -159,10 +154,9 @@ export default (state, elements, t) => onChange(state, (path) => {
       handleProcessState(state, elements, t);
       break;
     case 'form.error':
-      renderFeedback(state, elements, t);
+      renderError(state, elements, t);
       break;
     default:
-      console.log('missed handler');
       break;
   }
 });
