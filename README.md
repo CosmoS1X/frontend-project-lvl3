@@ -11,6 +11,8 @@ Service for reading RSS feeds.
 
 [Click](https://frontend-project-lvl3-two-weld.vercel.app/) to see live demo.
 
+![Preview](https://i114.fastpic.ru/big/2021/0605/b3/e7e4ea6dca0284e9570232bdad606ab3.png)
+
 ## Installation and usage
 
 To install locally, type in the console:
