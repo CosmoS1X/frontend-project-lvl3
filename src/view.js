@@ -18,13 +18,13 @@ const createFeedElement = (feed) => {
   return element;
 };
 
-const createPostElement = (post, t) => {
+const createPostElement = (post, viewedPostIds, t) => {
   const element = document.createElement('li');
   element.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'aligh-items-start', 'border-0', 'border-end-0');
 
   const link = document.createElement('a');
   link.setAttribute('href', post.link);
-  link.classList.add(post.readed ? 'fw-normal' : 'fw-bold');
+  link.classList.add(viewedPostIds.has(post.postId) ? ('fw-normal', 'link-secondary') : 'fw-bold');
   link.setAttribute('rel', 'noopener noreferrer');
   link.setAttribute('target', '_blank');
   link.textContent = post.title;
@@ -37,8 +37,9 @@ const createPostElement = (post, t) => {
   button.textContent = `${t('posts.viewButton')}`;
 
   button.addEventListener('click', () => {
+    viewedPostIds.add(post.postId);
     link.classList.remove('fw-bold');
-    link.classList.add('font-weight-normal');
+    link.classList.add('fw-normal', 'link-secondary');
 
     const title = document.querySelector('.modal-title');
     title.textContent = post.title;
@@ -48,8 +49,6 @@ const createPostElement = (post, t) => {
 
     const articleButton = document.querySelector('.full-article');
     articleButton.setAttribute('href', post.link);
-
-    post.readed = true;
   });
 
   element.append(link);
@@ -59,7 +58,7 @@ const createPostElement = (post, t) => {
 };
 
 export const renderFeeds = (state, t) => {
-  const { feeds } = state.data;
+  const { data: { feeds } } = state;
 
   const feedsContainer = document.querySelector('.feeds');
   feedsContainer.textContent = '';
@@ -86,7 +85,7 @@ export const renderFeeds = (state, t) => {
 };
 
 export const renderPosts = (state, t) => {
-  const { posts } = state.data;
+  const { data: { posts }, viewedPostIds } = state;
 
   const postsContainer = document.querySelector('.posts');
   postsContainer.textContent = '';
@@ -103,7 +102,7 @@ export const renderPosts = (state, t) => {
 
   const postsList = document.createElement('ul');
   postsList.classList.add('list-group', 'border-0', 'rounded-0');
-  posts.flat().forEach((post) => postsList.append(createPostElement(post, t)));
+  posts.forEach((post) => postsList.append(createPostElement(post, viewedPostIds, t)));
 
   postsCard.append(postsBody);
   postsCard.append(postsList);
@@ -161,8 +160,6 @@ const handleProcessState = (state, elements, t) => {
 };
 
 export default (state, elements, t) => onChange(state, (path) => {
-  // console.log('STATE:', state);
-  // console.log('PATH:', path);
   switch (path) {
     case 'data.feeds':
       renderFeeds(state, t);

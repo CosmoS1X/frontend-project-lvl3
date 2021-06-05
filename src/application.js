@@ -29,13 +29,12 @@ const addRss = (state) => {
       const { title, description, items } = parseRss(data);
       state.channels.unshift({ url: state.form.url, id: channelID });
       const feed = { title, description, id: channelID };
-      const posts = items.map((item) => ({ ...item, channelID }));
+      const posts = items.map((item) => ({ ...item, channelID, postId: _.uniqueId() }));
       state.data.feeds.unshift(feed);
       state.data.posts.unshift(...posts);
       state.processState = 'standby';
     })
     .catch((err) => {
-      console.log(err);
       state.form.error = err.message;
       state.processState = 'failed';
     });
@@ -47,7 +46,8 @@ const updatePosts = (state) => {
       const { items } = parseRss(data);
       const newPosts = items.map((item) => ({ ...item, channelID: channel.id }));
       const oldPosts = state.data.posts.filter((post) => post.channelID === channel.id);
-      const diff = _.differenceBy(newPosts, oldPosts, 'guid');
+      const diff = _.differenceBy(newPosts, oldPosts, 'link')
+        .map((post) => ({ ...post, postId: _.uniqueId() }));
       if (diff.length > 0) {
         state.data.posts.unshift(...diff);
       }
@@ -68,6 +68,7 @@ export default () => {
       posts: [],
     },
     channels: [],
+    viewedPostIds: new Set(),
   };
 
   const elements = {

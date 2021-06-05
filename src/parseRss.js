@@ -18,14 +18,11 @@ export default (data) => {
       const title = post.querySelector('title');
       const description = post.querySelector('description');
       const link = post.querySelector('link');
-      const guid = post.querySelector('guid');
 
       return {
         title: title.textContent,
         description: description.textContent,
         link: link.textContent,
-        guid: guid.textContent,
-        readed: false,
       };
     }),
   };
