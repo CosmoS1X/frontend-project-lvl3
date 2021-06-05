@@ -7,7 +7,7 @@
 
 ## Description and demo
 
-Service for reading RSS feeds. 
+Service for reading RSS feeds. The app interface is in Russian, but you can easily add your language via i18next library.
 
 [Click](https://frontend-project-lvl3-two-weld.vercel.app/) to see live demo.
 
