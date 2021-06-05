@@ -2,10 +2,12 @@ import onChange from 'on-change';
 
 const createFeedElement = (feed) => {
   const element = document.createElement('li');
-  element.classList.add('list-group-item');
+  element.classList.add('list-group-item', 'border-0', 'border-end-0');
 
   const feedHeader = document.createElement('h3');
+  feedHeader.classList.add('h6', 'm-0');
   const feedDescription = document.createElement('p');
+  feedDescription.classList.add('m-0', 'small', 'text-black-50');
 
   feedHeader.textContent = feed.title;
   feedDescription.textContent = feed.description;
@@ -18,20 +20,20 @@ const createFeedElement = (feed) => {
 
 const createPostElement = (post, t) => {
   const element = document.createElement('li');
-  element.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start');
+  element.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'aligh-items-start', 'border-0', 'border-end-0');
 
   const link = document.createElement('a');
   link.setAttribute('href', post.link);
-  link.classList.add(post.readed ? 'font-weight-normal' : 'fw-bold');
+  link.classList.add(post.readed ? 'fw-normal' : 'fw-bold');
   link.setAttribute('rel', 'noopener noreferrer');
   link.setAttribute('target', '_blank');
   link.textContent = post.title;
 
   const button = document.createElement('button');
   button.setAttribute('type', 'button');
-  button.classList.add('btn', 'btn-primary', 'btn-sm');
-  button.setAttribute('data-toggle', 'modal');
-  button.setAttribute('data-target', '#modal');
+  button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
+  button.setAttribute('data-bs-toggle', 'modal');
+  button.setAttribute('data-bs-target', '#modal');
   button.textContent = `${t('posts.viewButton')}`;
 
   button.addEventListener('click', () => {
@@ -62,16 +64,25 @@ export const renderFeeds = (state, t) => {
   const feedsContainer = document.querySelector('.feeds');
   feedsContainer.textContent = '';
 
+  const feedCard = document.createElement('div');
+  feedCard.classList.add('card', 'border-0');
+
+  const feedBody = document.createElement('div');
+  feedBody.classList.add('card-body');
+
   const feedsHeader = document.createElement('h2');
+  feedsHeader.classList.add('card-title', 'h4');
   feedsHeader.textContent = `${t('feeds.title')}`;
 
   const feedsList = document.createElement('ul');
-  feedsList.classList.add('list-group', 'mb-5');
+  feedsList.classList.add('list-group', 'border-0', 'rounded-0');
 
   feeds.forEach((feed) => feedsList.append(createFeedElement(feed)));
 
-  feedsContainer.append(feedsHeader);
-  feedsContainer.append(feedsList);
+  feedCard.append(feedBody);
+  feedCard.append(feedsList);
+  feedBody.append(feedsHeader);
+  feedsContainer.append(feedCard);
 };
 
 export const renderPosts = (state, t) => {
@@ -80,15 +91,24 @@ export const renderPosts = (state, t) => {
   const postsContainer = document.querySelector('.posts');
   postsContainer.textContent = '';
 
+  const postsCard = document.createElement('div');
+  postsCard.classList.add('card', 'border-0');
+
+  const postsBody = document.createElement('div');
+  postsBody.classList.add('card-body');
+
   const postsHeader = document.createElement('h2');
+  postsHeader.classList.add('card-title', 'h4');
   postsHeader.textContent = `${t('posts.title')}`;
 
   const postsList = document.createElement('ul');
-  postsList.classList.add('list-group');
+  postsList.classList.add('list-group', 'border-0', 'rounded-0');
   posts.flat().forEach((post) => postsList.append(createPostElement(post, t)));
 
-  postsContainer.append(postsHeader);
-  postsContainer.append(postsList);
+  postsCard.append(postsBody);
+  postsCard.append(postsList);
+  postsBody.append(postsHeader);
+  postsContainer.append(postsCard);
 };
 
 const renderError = (state, elements, t) => {

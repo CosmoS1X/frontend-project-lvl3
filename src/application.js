@@ -42,21 +42,18 @@ const addRss = (state) => {
 };
 
 const updatePosts = (state) => {
-  state.channels.forEach((channel) => {
-    const updates = fetchData(channel.url)
-      .then((data) => {
-        const { items } = parseRss(data);
-        const newPosts = items.map((item) => ({ ...item, channelID: channel.id }));
-        const oldPosts = state.data.posts.filter((post) => post.channelID === channel.id);
-        const diff = _.differenceBy(newPosts, oldPosts, 'guid');
-        console.log('diff', diff);
-        if (diff.length > 0) {
-          state.data.posts.unshift(...diff);
-        }
-      })
-      .catch((err) => console.log(err));
-    Promise.all([updates]).finally(() => setTimeout(() => updatePosts(state), updateTimeout));
-  });
+  const updates = state.channels.map((channel) => fetchData(channel.url)
+    .then((data) => {
+      const { items } = parseRss(data);
+      const newPosts = items.map((item) => ({ ...item, channelID: channel.id }));
+      const oldPosts = state.data.posts.filter((post) => post.channelID === channel.id);
+      const diff = _.differenceBy(newPosts, oldPosts, 'guid');
+      if (diff.length > 0) {
+        state.data.posts.unshift(...diff);
+      }
+    })
+    .catch((err) => console.log(err)));
+  Promise.all(updates).finally(() => setTimeout(() => updatePosts(state), updateTimeout));
 };
 
 export default () => {
