@@ -1,14 +1,32 @@
 import 'bootstrap';
 import i18n from 'i18next';
+import axios from 'axios';
 import _ from 'lodash';
 import * as yup from 'yup';
 import yupLocale from './locales/yupLocale.js';
-import fetchData from './fetchData.js';
 import resources from './locales';
 import parseRss from './parseRss.js';
 import view from './view.js';
 
 const updateTimeout = 5000;
+const proxyLink = 'https://hexlet-allorigins.herokuapp.com/';
+
+const addProxy = (url) => {
+  const newUrl = new URL('get', proxyLink);
+  newUrl.searchParams.set('disableCache', 'true');
+  newUrl.searchParams.set('url', url);
+  return newUrl.toString();
+};
+
+const fetchData = (url) => axios
+  .get(url)
+  .then((response) => {
+    if (response.statusText === 'OK') {
+      return response.data;
+    }
+
+    throw new Error('Network Error');
+  });
 
 const validateURL = (url, channels) => {
   const feedURLs = channels.map((feed) => feed.url);
@@ -23,7 +41,7 @@ const validateURL = (url, channels) => {
 
 const addRss = (state) => {
   state.processState = 'loading';
-  fetchData(state.form.url)
+  fetchData(addProxy(state.form.url))
     .then((data) => {
       const channelID = _.uniqueId();
       const { title, description, items } = parseRss(data);
@@ -41,7 +59,7 @@ const addRss = (state) => {
 };
 
 const updatePosts = (state) => {
-  const updates = state.channels.map((channel) => fetchData(channel.url)
+  const updates = state.channels.map((channel) => fetchData(addProxy(channel.url))
     .then((data) => {
       const { items } = parseRss(data);
       const newPosts = items.map((item) => ({ ...item, channelID: channel.id }));
