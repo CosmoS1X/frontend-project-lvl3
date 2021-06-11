@@ -20,11 +20,8 @@ const addProxy = (url) => {
 
 const fetchData = (url) => axios
   .get(url)
-  .then((response) => {
-    if (response.statusText === 'OK') {
-      return response.data;
-    }
-
+  .then((response) => response.data)
+  .catch(() => {
     throw new Error('errors.network');
   });
 
