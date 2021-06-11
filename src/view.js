@@ -34,7 +34,7 @@ const createPostElement = (post, viewedPostIds, t) => {
   button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
   button.setAttribute('data-bs-toggle', 'modal');
   button.setAttribute('data-bs-target', '#modal');
-  button.textContent = `${t('posts.viewButton')}`;
+  button.textContent = t('posts.viewButton');
 
   button.addEventListener('click', () => {
     viewedPostIds.add(post.postId);
@@ -71,7 +71,7 @@ export const renderFeeds = (state, t) => {
 
   const feedsHeader = document.createElement('h2');
   feedsHeader.classList.add('card-title', 'h4');
-  feedsHeader.textContent = `${t('feeds.title')}`;
+  feedsHeader.textContent = t('feeds.title');
 
   const feedsList = document.createElement('ul');
   feedsList.classList.add('list-group', 'border-0', 'rounded-0');
@@ -98,7 +98,7 @@ export const renderPosts = (state, t) => {
 
   const postsHeader = document.createElement('h2');
   postsHeader.classList.add('card-title', 'h4');
-  postsHeader.textContent = `${t('posts.title')}`;
+  postsHeader.textContent = t('posts.title');
 
   const postsList = document.createElement('ul');
   postsList.classList.add('list-group', 'border-0', 'rounded-0');
@@ -115,17 +115,7 @@ const renderError = (error, elements, t) => {
   input.classList.add('is-invalid');
   feedback.classList.remove('text-success');
   feedback.classList.add('text-danger');
-  switch (error) {
-    case 'Parse Error':
-      feedback.textContent = t('errors.notContain');
-      break;
-    case 'Network Error':
-      feedback.textContent = t('errors.network');
-      break;
-    default:
-      feedback.textContent = t(error);
-      break;
-  }
+  feedback.textContent = t(error);
 };
 
 export const renderSuccess = (elements, t) => {
@@ -133,7 +123,7 @@ export const renderSuccess = (elements, t) => {
   input.classList.remove('is-invalid');
   feedback.classList.remove('text-danger');
   feedback.classList.add('text-success');
-  feedback.textContent = `${t('success')}`;
+  feedback.textContent = t('success');
 };
 
 const handleProcessState = (state, elements, t) => {

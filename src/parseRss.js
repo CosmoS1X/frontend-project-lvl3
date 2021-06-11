@@ -3,13 +3,13 @@ import _ from 'lodash';
 export default (data) => {
   const parser = new DOMParser();
   const dom = parser.parseFromString(data.contents, 'application/xml');
+  const rss = dom.querySelector('rss');
   const errors = dom.querySelectorAll('parsererror');
 
-  if (!_.isEmpty(errors)) {
-    throw new Error('Parse Error');
+  if (!_.isEmpty(errors) || !rss) {
+    throw new Error('errors.notContain');
   }
 
-  const rss = dom.querySelector('rss');
   const feedTitle = rss.querySelector('title');
   const feedDescription = rss.querySelector('description');
   const postElements = rss.querySelectorAll('item');

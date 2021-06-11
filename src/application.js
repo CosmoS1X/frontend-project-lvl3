@@ -25,7 +25,7 @@ const fetchData = (url) => axios
       return response.data;
     }
 
-    throw new Error('Network Error');
+    throw new Error('errors.network');
   });
 
 const validateURL = (url, channels) => {
@@ -70,6 +70,11 @@ const updatePosts = (state) => {
     })
     .catch((err) => console.log(err)));
   Promise.all(updates).finally(() => setTimeout(() => updatePosts(state), updateTimeout));
+};
+
+const clearErrors = (state) => {
+  state.form.error = null;
+  state.loadingProcess.error = null;
 };
 
 export default () => {
@@ -120,6 +125,7 @@ export default () => {
         }
 
         watchedState.form.url = url;
+        clearErrors(watchedState);
         addRss(watchedState);
       });
 
