@@ -50,7 +50,6 @@ const addRss = (state) => {
       state.loadingProcess.status = 'standby';
     })
     .catch((err) => {
-      console.log(err.message);
       state.loadingProcess.error = err.message;
       state.loadingProcess.status = 'failed';
     });
