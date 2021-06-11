@@ -110,12 +110,12 @@ export const renderPosts = (state, t) => {
   postsContainer.append(postsCard);
 };
 
-const renderError = (state, elements, t) => {
+const renderError = (error, elements, t) => {
   const { input, feedback } = elements;
   input.classList.add('is-invalid');
   feedback.classList.remove('text-success');
   feedback.classList.add('text-danger');
-  switch (state.form.error) {
+  switch (error) {
     case 'Not Contain RSS':
       feedback.textContent = t('errors.notContain');
       break;
@@ -123,7 +123,7 @@ const renderError = (state, elements, t) => {
       feedback.textContent = t('errors.network');
       break;
     default:
-      feedback.textContent = t(state.form.error);
+      feedback.textContent = t(error);
       break;
   }
 };
@@ -137,8 +137,9 @@ export const renderSuccess = (elements, t) => {
 };
 
 const handleProcessState = (state, elements, t) => {
+  const { loadingProcess: { status } } = state;
   const { form, input, submitButton } = elements;
-  switch (state.processState) {
+  switch (status) {
     case 'loading':
       input.readOnly = true;
       submitButton.disabled = true;
@@ -160,6 +161,7 @@ const handleProcessState = (state, elements, t) => {
 };
 
 export default (state, elements, t) => onChange(state, (path) => {
+  const { form, loadingProcess } = state;
   switch (path) {
     case 'data.feeds':
       renderFeeds(state, t);
@@ -167,11 +169,14 @@ export default (state, elements, t) => onChange(state, (path) => {
     case 'data.posts':
       renderPosts(state, t);
       break;
-    case 'processState':
+    case 'form.error':
+      renderError(form.error, elements, t);
+      break;
+    case 'loadingProcess.status':
       handleProcessState(state, elements, t);
       break;
-    case 'form.error':
-      renderError(state, elements, t);
+    case 'loadingProcess.error':
+      renderError(loadingProcess.error, elements, t);
       break;
     default:
       break;

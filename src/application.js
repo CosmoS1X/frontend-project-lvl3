@@ -40,7 +40,7 @@ const validateURL = (url, channels) => {
 };
 
 const addRss = (state) => {
-  state.processState = 'loading';
+  state.loadingProcess.status = 'loading';
   fetchData(addProxy(state.form.url))
     .then((data) => {
       const channelID = _.uniqueId();
@@ -50,11 +50,11 @@ const addRss = (state) => {
       const posts = items.map((item) => ({ ...item, channelID, postId: _.uniqueId() }));
       state.data.feeds.unshift(feed);
       state.data.posts.unshift(...posts);
-      state.processState = 'standby';
+      state.loadingProcess.status = 'standby';
     })
     .catch((err) => {
-      state.form.error = err.message;
-      state.processState = 'failed';
+      state.loadingProcess.error = err.message;
+      state.loadingProcess.status = 'failed';
     });
 };
 
@@ -66,9 +66,7 @@ const updatePosts = (state) => {
       const oldPosts = state.data.posts.filter((post) => post.channelID === channel.id);
       const diff = _.differenceBy(newPosts, oldPosts, 'link')
         .map((post) => ({ ...post, postId: _.uniqueId() }));
-      if (diff.length > 0) {
-        state.data.posts.unshift(...diff);
-      }
+      state.data.posts.unshift(...diff);
     })
     .catch((err) => console.log(err)));
   Promise.all(updates).finally(() => setTimeout(() => updatePosts(state), updateTimeout));
@@ -76,7 +74,10 @@ const updatePosts = (state) => {
 
 export default () => {
   const state = {
-    processState: 'standby',
+    loadingProcess: {
+      status: 'standby',
+      error: null,
+    },
     form: {
       url: '',
       error: null,
@@ -112,10 +113,9 @@ export default () => {
         const formData = new FormData(e.target);
         const url = formData.get('url');
         const error = validateURL(url, watchedState.channels);
-        watchedState.form.error = error;
 
         if (error) {
-          watchedState.processState = 'failed';
+          watchedState.form.error = error;
           return;
         }
 
