@@ -116,7 +116,7 @@ const renderError = (error, elements, t) => {
   feedback.classList.remove('text-success');
   feedback.classList.add('text-danger');
   switch (error) {
-    case 'Not Contain RSS':
+    case 'Parse Error':
       feedback.textContent = t('errors.notContain');
       break;
     case 'Network Error':
