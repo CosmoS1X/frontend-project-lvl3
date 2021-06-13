@@ -20,7 +20,7 @@ const addProxy = (url) => {
 
 const fetchData = (url) => axios
   .get(url)
-  .then((response) => response.data)
+  .then((response) => response.data.contents)
   .catch(() => {
     throw new Error('errors.network');
   });
@@ -69,7 +69,7 @@ const updatePosts = (state) => {
   Promise.all(updates).finally(() => setTimeout(() => updatePosts(state), updateTimeout));
 };
 
-const clearErrors = (state) => {
+const resetErrors = (state) => {
   state.form.error = null;
   state.loadingProcess.error = null;
 };
@@ -122,7 +122,7 @@ export default () => {
         }
 
         watchedState.form.url = url;
-        clearErrors(watchedState);
+        resetErrors(watchedState);
         addRss(watchedState);
       });
 

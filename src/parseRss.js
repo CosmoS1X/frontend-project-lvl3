@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 export default (data) => {
   const parser = new DOMParser();
-  const dom = parser.parseFromString(data.contents, 'application/xml');
+  const dom = parser.parseFromString(data, 'application/xml');
   const rss = dom.querySelector('rss');
   const errors = dom.querySelectorAll('parsererror');
 
