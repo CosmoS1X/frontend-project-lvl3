@@ -18,6 +18,7 @@ Service for reading RSS feeds. The app interface is in Russian, but you can easi
 To install locally, type in the console:
 
     git clone git@github.com:CosmoS1X/frontend-project-lvl3.git
+    cd frontend-project-lvl3
     make install
     
 Type in the console to build via webpack:
